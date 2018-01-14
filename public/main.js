@@ -128,7 +128,7 @@ var goSearch = debounce(function () {
 	fetch('/search?' + serialize(query))
 		.then(function(res) { return res.json() })
 		.then(onSearchResult)
-}, 1000)
+}, 500)
 
 var onFormChange = function () {
 	updateFormInput()
@@ -151,6 +151,10 @@ var renderForm = function () {
 }
 
 var getRadiusFromZoom = function (zoom) {
+	if (zoom < 9) {
+		return 40
+	}
+
 	if (zoom < 10) {
 		return 30
 	}
@@ -177,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	//insert google maps script
 	var script = document.createElement('script')
 	script.type = 'text/javascript'
-	script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA3PKwJ5qHgxj7LXs-IWPyWi4Ykav7oXJE&callback=initMap'
+	script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA3PKwJ5qHgxj7LXs-IWPyWi4Ykav7oXJE&libraries=places&callback=initMap'
 	document.body.appendChild(script);
 
 	//when its done
@@ -185,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		var center = { lat: formInput.coordinates.lat, lng: formInput.coordinates.lng };
 
-		map = new google.maps.Map(document.querySelector('.map'), {
+		map = new google.maps.Map(document.querySelector('.map-container'), {
 			zoom: formInput.zoom,
 			center: center
 		});
@@ -233,6 +237,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			formInput.zoom = zoom;
 			formInput.radius = radius;
 			onFormChange();
+		})
+
+		map.addListener('center_changed', function () {
+			setCenterCircle()
+			onFormChange();
+		})
+
+		var autocomplete = new google.maps.places.Autocomplete(document.querySelector('input.autocomplete-address'));
+        autocomplete.bindTo('bounds', map);
+
+		autocomplete.addListener('place_changed', function() {
+			var place = autocomplete.getPlace()
+			map.setCenter({
+				lat: place.geometry.location.lat(),
+				lng: place.geometry.location.lng()
+			})
 		})
 
 		setCenterCircle()
