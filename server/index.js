@@ -9,4 +9,4 @@ app.get('/search', require('./search'))
 //http://localhost:4000/get_phone_number?ad_id=1160195765
 app.get('/get_phone_number', require('./getPhoneNumber'))
 
-app.listen(4000);
+app.listen(process.env.PORT || 4000);
