@@ -9,7 +9,7 @@ button:focus {
     outline: none;
 }
 body {
-	font-family: 'Helvetica Neue';
+	font-family: 'Open Sans';
 	overflow: hidden;
 }
 .form {
@@ -91,12 +91,16 @@ body {
 
 	.form .results {
 		max-height: 500px;
-	}	
+	}
+		.form .results .no-results {
+			text-align: center;
+			padding-top: 40px;
+		}
 		.form .results .item {
 			width: calc(50% - 10px);
 			display: inline-block;
 			background-size: cover;
-			height: 150px;
+			height: 160px;
 			margin-top: 10px;
 			margin-right: 10px;
 			position: relative;
@@ -104,16 +108,18 @@ body {
 			overflow: hidden;
 			cursor: pointer;
 			background-position: 50% 50%;
+			transition: .3s ease;
+			/*box-shadow: 2px 0 3px rgba(0, 0, 0, .3);*/
 		}
 
 		.form .results .item:nth-child(2n) {
 			margin-right: 0;
 		}
 
-		.form .results .item:hover .overlay {
-			background-color: rgba(0, 0, 0, .2);
-			/*transform: translateY(1px);*/
+		.form .results .item:hover {
+			transform: translateY(1px);
 		}
+
 			.form .results .item .overlay {
 				box-sizing: border-box;
 				padding: 10px;
@@ -123,6 +129,10 @@ body {
 				height: 100%;
 				background-color: rgba(0, 0, 0, .4);
 				transition: .3s ease;
+			}
+			.form .results .item .overlay:hover {
+				background-color: rgba(0, 0, 0, .2);
+				/*transform: translateY(1px);*/
 			}
 
 			.form .results .item .overlay:before {

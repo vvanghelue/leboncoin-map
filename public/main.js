@@ -3,7 +3,7 @@ var map;
 var isLoading = false;
 
 var formInput = {
-	category: 9,
+	category: 0,
 	textSearch: '',
 	coordinates: { "lat":48.864, "lng":2.29 },
 	zoom: 11,
@@ -50,10 +50,51 @@ var setLoading = function (loading) {
 
 //http://localhost:4000/search?q=&category=9&lat=48.4&lng=2.3&radius=20&price_min=16000&price_max=30000&surface_min=24&surface_max=35
 
-var goSearch = function () {
-	if (isLoading) {
-		return;
+var onSearchResult
+
+var goSearch = debounce(function () {
+	
+	onSearchResult = function(data) {
+		setLoading(false)
+
+		var resultsContainerElement = document.querySelector('.form .results')
+
+		if (!data.ads || data.ads.length == 0) {
+			resultsContainerElement.innerHTML = '<div class="no-results">Pas de résultats 🤔</div>';
+			return;
+		}
+
+		resultsContainerElement.innerHTML = '';
+
+		data.ads.forEach(function (ad) {
+
+			var backgroundImageStyle = `background: #ddd')`;
+			if (ad.images && ad.images.small_url) {
+				backgroundImageStyle = `background-image: url('${ad.images.small_url}')`;
+			}
+
+			var priceDisplay = ad.price ? accounting.formatMoney(ad.price, "", 0, " ", ",") + ' €' : '';
+
+			var resultElement = new DOMParser().parseFromString(`
+				<div class="item" style="${backgroundImageStyle}">
+					<div class="overlay">
+						<div class="bottom">
+						  <div class="price">${priceDisplay}</div>
+						  <div class="title">${ad.subject}</div>
+						</div>
+					</div>
+				</div>
+			`, "text/html").body.firstChild
+
+			resultElement.addEventListener('click', function () {
+				window.open(`https://www.leboncoin.fr/annonce/${ad.list_id}.htm`, '_blank')
+			})
+
+			resultsContainerElement.appendChild(resultElement)
+		})
 	}
+
+	setLoading(true)
 
 	/*
 	setLoading(true)
@@ -86,40 +127,8 @@ var goSearch = function () {
 
 	fetch('/search?' + serialize(query))
 		.then(function(res) { return res.json() })
-		.then(function(data) {
-			console.log(data)
-			var resultsContainerElement = document.querySelector('.form .results')
-
-			resultsContainerElement.innerHTML = '';
-
-			data.ads.forEach(function (ad) {
-
-				var backgroundImageStyle = `background: #ddd')`;
-				if (ad.images && ad.images.small_url) {
-					backgroundImageStyle = `background-image: url('${ad.images.small_url}')`;
-				}
-
-				var priceDisplay = ad.price ? accounting.formatMoney(ad.price, "", 0, " ", ",") + ' €' : '';
-
-				var resultElement = new DOMParser().parseFromString(`
-					<div class="item" style="${backgroundImageStyle}">
-						<div class="overlay">
-							<div class="bottom">
-							  <div class="price">${priceDisplay}</div>
-							  <div class="title">${ad.subject}</div>
-							</div>
-						</div>
-					</div>
-				`, "text/html").body.firstChild
-
-				resultElement.addEventListener('click', function () {
-					window.open(`https://www.leboncoin.fr/annonce/${ad.list_id}.htm`, '_blank')
-				})
-
-				resultsContainerElement.appendChild(resultElement)
-			})
-		})
-}
+		.then(onSearchResult)
+}, 1000)
 
 var onFormChange = function () {
 	updateFormInput()
@@ -230,6 +239,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		renderForm()
 		goSearch()
 	}
+
+	document.querySelector('.form input.textSearch').addEventListener('keyup', onFormChange)
+	document.querySelector('.form input.priceMin').addEventListener('keyup', onFormChange)
+	document.querySelector('.form input.priceMax').addEventListener('keyup', onFormChange)
 
 	document.querySelector('.form select.category').addEventListener('change', onFormChange)
 	document.querySelector('.button-search').addEventListener('click', onFormChange)
