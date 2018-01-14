@@ -101,6 +101,7 @@ body {
 		.form .results .item {
 			width: calc(50% - 10px);
 			display: inline-block;
+			vertical-align: top;
 			background-size: cover;
 			height: 160px;
 			margin-top: 6px;
