@@ -4,7 +4,7 @@ var isLoading = false;
 
 var formInput = {
 	category: 9,
-	textSearch: 'villa',
+	textSearch: '',
 	coordinates: { "lat":48.864, "lng":2.29 },
 	zoom: 11,
 	radius: 10,
