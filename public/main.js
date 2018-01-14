@@ -53,6 +53,7 @@ var setLoading = function (loading) {
 var onSearchResult
 
 var goSearch = debounce(function () {
+	document.querySelector('.form').scrollTop = 0;
 	
 	onSearchResult = function(data) {
 		setLoading(false)
@@ -225,6 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		})
 
 		map.addListener('dragend', function () {
+			document.querySelector('input.autocomplete-address').value = ''
 			onFormChange()
 			renderForm()
 		})
@@ -244,7 +246,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			onFormChange();
 		})
 
-		var autocomplete = new google.maps.places.Autocomplete(document.querySelector('input.autocomplete-address'));
+		var autocomplete = new google.maps.places.Autocomplete(
+			document.querySelector('input.autocomplete-address')
+		);
         autocomplete.bindTo('bounds', map);
 
 		autocomplete.addListener('place_changed', function() {

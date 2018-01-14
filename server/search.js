@@ -40,7 +40,7 @@ module.exports = async function(req, res) {
 				// }
 			}
 		},
-		"limit": 100,
+		"limit": 200,
 		"limit_alu": 2,
 		"owner_type": "all",
 		"pivot": "0,0,0", //"1366813779,1515588477,315000"

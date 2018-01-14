@@ -42,7 +42,7 @@ body {
 		box-sizing: border-box;
 		border: 2px solid #ddd;
 		font-size: 20px;
-		height: 45px;
+		/*height: 45px;*/
 		border-radius: 4px;
 		/*font-weight: bold;*/
 	}
